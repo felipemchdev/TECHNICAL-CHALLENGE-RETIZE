@@ -1,0 +1,13 @@
+.git
+.env
+logs/
+retize_dbt/target/
+retize_dbt/dbt_packages/
+retize_dbt/logs/
+__pycache__/
+*.pyc
+*.py[cod]
+.venv/
+venv/
+dags/
+data/

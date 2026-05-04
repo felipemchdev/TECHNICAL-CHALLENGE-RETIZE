@@ -7,7 +7,7 @@ from pathlib import Path
 import pandas as pd
 from sqlalchemy import create_engine, text
 
-DATA_PATH = Path("data")
+DATA_PATH = Path(__file__).resolve().parent.parent / "data"
 REQUIRED_ENV_VARS = [
     "POSTGRES_USER",
     "POSTGRES_PASSWORD",
@@ -43,8 +43,8 @@ def log_event(logger: logging.Logger, level: int, event: str, **extra_data) -> N
     logger.log(level, event, extra={"extra_data": extra_data})
 
 
-def normalize_columns(df: pd.DataFrame) -> pd.Index:
-    return df.columns.str.strip().str.lower().str.replace(" ", "_", regex=False)
+def normalize_columns(columns: pd.Index) -> pd.Index:
+    return columns.str.strip().str.lower().str.replace(" ", "_", regex=False)
 
 
 def validate_env_vars() -> None:
@@ -64,10 +64,10 @@ def build_engine():
 
 def load_postgres(engine, csv_path: Path, table_name: str, logger: logging.Logger) -> None:
     df = pd.read_csv(csv_path)
-    df.columns = normalize_columns(df)
+    df.columns = normalize_columns(df.columns)
     with engine.begin() as conn:
         conn.execute(text(f'DROP TABLE IF EXISTS "{table_name}" CASCADE'))
-    df.to_sql(table_name, engine, if_exists="replace", index=False)
+        df.to_sql(table_name, conn, if_exists="append", index=False)
     log_event(
         logger,
         logging.INFO,
@@ -92,6 +92,8 @@ def main() -> None:
         raise RuntimeError(f"No CSV files found in data path: {DATA_PATH}")
 
     engine = build_engine()
+    failed_files: list[str] = []
+
     for csv_path in csv_files:
         table_name = f"raw_{csv_path.stem}"
         log_event(
@@ -101,9 +103,32 @@ def main() -> None:
             table_name=table_name,
             file_name=csv_path.name,
         )
-        load_postgres(engine, csv_path, table_name, logger)
+        try:
+            load_postgres(engine, csv_path, table_name, logger)
+        except Exception as exc:
+            log_event(
+                logger,
+                logging.ERROR,
+                "table_load_failed",
+                table_name=table_name,
+                file_name=csv_path.name,
+                error=str(exc),
+            )
+            failed_files.append(csv_path.name)
 
-    log_event(logger, logging.INFO, "ingestion_finished", files_processed=len(csv_files))
+    total = len(csv_files)
+    succeeded = total - len(failed_files)
+    log_event(
+        logger,
+        logging.INFO,
+        "ingestion_finished",
+        files_processed=total,
+        succeeded=succeeded,
+        failed=len(failed_files),
+    )
+
+    if failed_files:
+        raise RuntimeError(f"Ingestion completed with {len(failed_files)} failure(s): {failed_files}")
 
 
 if __name__ == "__main__":

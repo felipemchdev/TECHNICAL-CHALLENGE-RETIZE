@@ -6,7 +6,7 @@ WITH ranked AS (
         post_date,
         format,
         engagement_rate,
-        RANK() OVER (
+        ROW_NUMBER() OVER (
             PARTITION BY account_id
             ORDER BY engagement_rate DESC
         ) AS rn
