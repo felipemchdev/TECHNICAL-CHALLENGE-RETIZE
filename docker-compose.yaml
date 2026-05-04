@@ -9,13 +9,21 @@ services:
       POSTGRES_DB: ${POSTGRES_DB}
     ports:
       - "55432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
 
   airflow:
     build:
       context: .
       dockerfile: Dockerfile.airflow
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
     env_file:
       - .env
     environment:
@@ -37,7 +45,8 @@ services:
       context: .
       dockerfile: Dockerfile.streamlit
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
     env_file:
       - .env
     environment:
@@ -47,3 +56,6 @@ services:
       - ./:/app
     ports:
       - "8501:8501"
+
+volumes:
+  postgres_data:
