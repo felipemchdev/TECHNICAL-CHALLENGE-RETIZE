@@ -97,23 +97,23 @@ echo -e "${GREEN_DARK}[SUCCESS] dbt_artifacts run_results=${HIGHLIGHT}/opt/proje
 with DAG(
     dag_id="retize_pipeline",
     start_date=datetime(2024, 1, 1),
-    schedule_interval=None,
-    catchup=False
+    schedule=None,
+    catchup=False,
 ) as dag:
 
     ingest = BashOperator(
         task_id="ingest_csv",
-        bash_command=INGEST_CMD
+        bash_command=INGEST_CMD,
     )
 
     dbt_run = BashOperator(
         task_id="dbt_run",
-        bash_command=DBT_RUN_CMD
+        bash_command=DBT_RUN_CMD,
     )
 
     dbt_test = BashOperator(
         task_id="dbt_test",
-        bash_command=DBT_TEST_CMD
+        bash_command=DBT_TEST_CMD,
     )
 
     ingest >> dbt_run >> dbt_test
