@@ -34,8 +34,8 @@ raw_tiktok_comments ──────────┴──► stg_platform ─�
 - Docker e Docker Compose instalados na máquina.
 - (Opcional) Python 3.12 caso deseje rodar o painel visual localmente sem o container.
 
-**Passo a passo inicial:**
-Crie ou configure o arquivo `.env` na raiz do repositório contendo as variáveis que guiarão todo o cluster:
+**Passo a passo inicial:**  
+Crie ou configure o arquivo `.env` na raiz do repositório, com base em `.env.example` que contém as variáveis que guiarão todo o cluster:
 
 ```env
 POSTGRES_USER=techtest
@@ -126,7 +126,7 @@ docker compose exec -T postgres psql -U techtest -d views_db -f /opt/project/que
 **Limitações Atuais:**
 
 - A ingestão bruta lê os dados em memória através do Pandas no `load_data.py`. Embora seja rápido e aplicável para o volume do desafio, isso criará gargalo de RAM se o arquivo bater na casa das dezenas de gigabytes. 
-- O pipeline é disparado manualmente via UI do Airflow (`schedule_interval=None`). Essa decisão é intencional para o contexto do desafio — em produção, o schedule seria configurado para `@daily` ou baseado em evento de chegada de dados.
+- O pipeline é disparado manualmente via UI do Airflow (`schedule_interval=None`). Essa decisão é intencional para o contexto do desafio; Em produção, o schedule seria configurado para `@daily` ou baseado em evento de chegada de dados.
 
 **Melhorias Futuras:**
 
