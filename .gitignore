@@ -1,0 +1,26 @@
+# Environment Variables
+.env
+
+# Logs
+logs/
+*.log
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+
+# dbt
+target/
+dbt_modules/
+dbt_packages/
+retize_dbt/logs/
+retize_dbt/target/
+retize_dbt/dbt_packages/
+
+# OS / IDE
+.DS_Store
+.idea/
+.vscode/
