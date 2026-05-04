@@ -1,0 +1,88 @@
+version: 2
+
+models:
+  - name: instagram
+    description: >
+      Camada silver de conteúdo do Instagram. Faz o JOIN entre raw_instagram_media
+      e raw_instagram_media_insights para consolidar métricas de engajamento e alcance
+      num único registro por post. Sem deduplicação (feita na camada gold).
+    columns:
+      - name: content_id
+        description: "ID do post convertido para texto (::text) para evitar overflow de inteiros grandes do Instagram."
+        tests:
+          - not_null
+      - name: account_id
+        description: "Username da conta em minúsculas para garantir agrupamento consistente."
+        tests:
+          - not_null
+      - name: platform
+        description: "Sempre 'instagram'."
+        tests:
+          - accepted_values:
+              values: ['instagram']
+      - name: post_date
+        description: "Timestamp da publicação convertido de string ISO para timestamp."
+      - name: format
+        description: "Tipo de mídia (ex: image, video, carousel_album) em minúsculas."
+      - name: likes
+        description: "Curtidas: prioriza raw_instagram_media_insights, com fallback para raw_instagram_media."
+      - name: comments_count
+        description: "Comentários: prioriza raw_instagram_media_insights, com fallback para raw_instagram_media."
+      - name: reach
+        description: "Alcance único do post, vindo de raw_instagram_media_insights. Pode ser NULL."
+      - name: views
+        description: "Visualizações do post, vindo de raw_instagram_media_insights. Pode ser NULL (posts de foto geralmente não têm views)."
+
+  - name: tiktok
+    description: >
+      Camada silver de conteúdo do TikTok. Normaliza nomes de colunas e converte
+      o campo de tempo Unix (create_time) para timestamp. Todos os posts são do
+      formato 'video' por definição da plataforma. Filtra registros sem item_id.
+    columns:
+      - name: content_id
+        description: "item_id convertido para texto para garantir consistência de tipo com Instagram."
+        tests:
+          - not_null
+      - name: account_id
+        description: "business_username em minúsculas."
+        tests:
+          - not_null
+      - name: platform
+        description: "Sempre 'tiktok'."
+        tests:
+          - accepted_values:
+              values: ['tiktok']
+      - name: post_date
+        description: "Timestamp Unix (create_time) convertido com to_timestamp()."
+      - name: format
+        description: "Sempre 'video' — TikTok não possui outros formatos nos dados fornecidos."
+      - name: likes
+        description: "Curtidas do post."
+      - name: comments_count
+        description: "Comentários do post (renomeado de 'comments')."
+      - name: reach
+        description: "Alcance único do post. Pode ser NULL."
+      - name: views
+        description: "Visualizações do video (renomeado de 'video_views')."
+
+  - name: platform
+    description: >
+      Camada silver de comentários unificada. Combina instagram_comments e
+      tiktok_comments via UNION ALL e normaliza os rótulos de sentimento de
+      português para inglês (positivo→positive, negativo→negative, demais→neutral).
+    columns:
+      - name: content_id
+        description: "post_id do comentário convertido para texto."
+        tests:
+          - not_null
+      - name: platform
+        description: "Plataforma de origem do comentário."
+        tests:
+          - accepted_values:
+              values: ['instagram', 'tiktok']
+      - name: sentiment
+        description: "Sentimento normalizado para inglês."
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['positive', 'negative', 'neutral']
