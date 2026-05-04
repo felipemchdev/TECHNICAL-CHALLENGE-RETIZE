@@ -8,17 +8,34 @@ Esta solução foi desenvolvida para responder a 5 perguntas de negócio fundame
 
 A arquitetura segue o padrão de pipeline em lote (Batch Processing) e foi estruturada em três camadas lógicas (Medallion Architecture):
 
-### Diagrama de Dados (MER)
-
 ```text
-raw_instagram_media ──────────┐
-raw_instagram_media_insights ─┤──► stg_instagram ──┐
-                              │                    │
-raw_tiktok_posts ─────────────┴──► stg_tiktok    ──┤──► mart_content_performance
-                                                   │
-raw_instagram_comments ───────┐                    │
-raw_tiktok_comments ──────────┴──► stg_platform ───┴──► mart_content_sentiment
+╔══════════════════════════════════════════════════════════════════════════════════╗
+║                         PIPELINE RETIZE — VISÃO GERAL                          ║
+╠══════════════╦═══════════════════════╦═══════════════════════╦══════════════════╣
+║  INGESTÃO    ║      RAW (Bronze)     ║    SILVER (Staging)   ║   GOLD (Marts)   ║
+║  Python      ║      PostgreSQL       ║    dbt views          ║   dbt tables     ║
+╠══════════════╬═══════════════════════╬═══════════════════════╬══════════════════╣
+║              ║  raw_instagram_media  ║                       ║                  ║
+║  CSVs  ───►  ║  raw_ig_insights     ├──► stg_instagram    ──┤                  ║
+║  (data/)     ║  raw_tiktok_posts    ├──► stg_tiktok       ──┼► mart_content_   ║
+║              ║                       ║                       ║  performance     ║
+║  src/        ║  raw_instagram_       ║                       ║                  ║
+║  load_data   ║  comments            ├──► stg_platform     ──┼► mart_content_   ║
+║  .py         ║  raw_tiktok_         ║    (comentários       ║  sentiment       ║
+║              ║  comments            ║     unificados)       ║                  ║
+╚══════════════╩═══════════════════════╩═══════════════════════╩══════════════════╝
+                          ▲                                           │
+                   Airflow DAG                               Streamlit Dashboard
+                   (orquestração)                            (validação visual)
+                   dags/pipeline.py                          streamlit_app.py
 ```
+
+**Granularidade das tabelas finais:**
+
+| Tabela | Nível | Chave |
+|--------|-------|-------|
+| `mart_content_performance` | 1 linha por post (deduplicado) | `(platform, content_id)` |
+| `mart_content_sentiment` | 1 linha por post com comentários | `(platform, content_id)` |
 
 1. **Ingestão (Raw):** Script em Python (`src/load_data.py`) que varre o diretório `data/` e realiza o *copy* direto e tipado dos arquivos CSV para o PostgreSQL sem nenhum tratamento.
 2. **Transformação Silver:** Construída via **dbt**. Normaliza nomes de contas (lowercase), converte formatos e IDs para texto (evitando falhas de inteiros gigantes), e uniformiza as classificações de sentimentos (positive/negative/neutral), sem realizar agregações.
@@ -28,6 +45,7 @@ raw_tiktok_comments ──────────┴──► stg_platform ─�
 4. **Visualização:** Painel construído em Streamlit conectando diretamente no Banco PostgreSQL, consumindo a camada Gold para exibir métricas com tratativas brasileiras de números e porcentagens. Opcionalmente, pode-se usar as queries contidas na pasta `queries/`.
 
 ## 3. Como Preparar o Ambiente
+
 
 **Requisitos:**
 
