@@ -119,4 +119,4 @@ Neste projeto, ferramentas de IA (como ChatGPT/Claude/Gemini) foram utilizadas p
 - Aceleração na escrita e formatação do arquivo `README.md`.
 - Geração de *boilerplates* estruturais para os testes `.yml` e asserções do `dbt`.
 - Revisão ortográfica e sintática de queries SQL.  
-Todas as decisões de modelagem (como a escolha do `GREATEST` no engajamento, tipagem em texto para IDs e padronização) foram tomadas humanamente com base no contexto do desafio.
+- Todas as decisões de modelagem (como a escolha do `GREATEST` no engajamento, tipagem em texto para IDs e padronização) foram tomadas humanamente com base no contexto do desafio.
