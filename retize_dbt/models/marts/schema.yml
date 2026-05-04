@@ -10,7 +10,7 @@ models:
           - relationships:
               to: source('public', 'raw_instagram_media')
               field: id::text
-  - name: titkok
+  - name: tiktok
     description: "Camada silver de conteudo TikTok sem deduplicacao."
     columns:
       - name: content_id
@@ -30,7 +30,7 @@ models:
         tests:
           - accepted_values:
               values: ['positive', 'negative', 'neutral']
-  - name: perfomance
+  - name: performance
     description: "Camada gold com deduplicacao em nivel de conteudo + plataforma."
     columns:
       - name: content_id

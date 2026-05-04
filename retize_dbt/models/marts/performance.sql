@@ -3,7 +3,7 @@
 WITH unioned AS (
     SELECT * FROM {{ ref('instagram') }}
     UNION ALL
-    SELECT * FROM {{ ref('titkok') }}
+    SELECT * FROM {{ ref('tiktok') }}
 ),
 ranked AS (
     SELECT

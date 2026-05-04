@@ -1,9 +1,9 @@
 WITH silver_count AS (
-    SELECT COUNT(*) AS n FROM {{ ref('titkok') }}
+    SELECT COUNT(*) AS n FROM {{ ref('tiktok') }}
 ),
 gold_count AS (
     SELECT COUNT(*) AS n
-    FROM {{ ref('perfomance') }}
+    FROM {{ ref('performance') }}
     WHERE platform = 'tiktok'
 )
 SELECT 1

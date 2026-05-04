@@ -29,7 +29,7 @@ ranked AS (
         account_id,
         platform,
         negative_ratio,
-        ROW_NUMBER() OVER (
+        RANK() OVER (
             PARTITION BY account_id
             ORDER BY negative_ratio DESC
         ) AS rn

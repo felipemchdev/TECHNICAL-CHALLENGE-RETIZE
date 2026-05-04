@@ -96,3 +96,11 @@ docker compose exec -T postgres psql -U techtest -d views_db -f /opt/project/que
 - **Refatorar Ingestão (Raw):** Substituir os DFs carregados em RAM por abordagens eficientes utilizando a feature de `COPY` nativo direto para o PostgreSQL via streams ou usando bibliotecas preparadas como DuckDB/Polars em caso de arquivos GCS/S3.
 - **Data Quality Avançado:** Acoplar bibliotecas extras como o `dbt-expectations` para prever anomalias numéricas ou variação abrupta no volume (ex: alertando caso o número de posts dobre subitamente de um dia para outro).
 - **Processamento Incremental:** Neste desafio, a tabela de performance atualiza realizando _Full Refresh_. Para tabelas massivas de Big Data, deve-se modificar os modelos no dbt para operarem de forma particionada e _Incremental_.
+
+## 11. Uso de IA (Inteligência Artificial)
+
+Neste projeto, ferramentas de IA (como ChatGPT/Claude/Gemini) foram utilizadas pontualmente como assistentes de codificação para:
+- Aceleração na escrita e formatação do arquivo `README.md`.
+- Geração de *boilerplates* estruturais para os testes `.yml` e asserções do `dbt`.
+- Revisão ortográfica e sintática de queries SQL.
+Todas as decisões de modelagem (como a escolha do `GREATEST` no engajamento, tipagem em texto para IDs e padronização) foram tomadas humanamente com base no contexto do desafio. particionada e _Incremental_.

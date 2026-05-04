@@ -2,7 +2,7 @@
 
 WITH valid_content AS (
     SELECT DISTINCT content_id, platform
-    FROM {{ ref('perfomance') }}
+    FROM {{ ref('performance') }}
 ),
 base_comments AS (
     SELECT c.content_id, c.platform, c.sentiment

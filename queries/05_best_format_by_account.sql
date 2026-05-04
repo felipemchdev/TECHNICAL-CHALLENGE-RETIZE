@@ -12,7 +12,7 @@ ranked AS (
         account_id,
         format,
         avg_engagement_rate,
-        ROW_NUMBER() OVER (
+        RANK() OVER (
             PARTITION BY account_id
             ORDER BY avg_engagement_rate DESC
         ) AS rn
