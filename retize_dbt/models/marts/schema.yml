@@ -1,0 +1,70 @@
+version: 2
+
+models:
+  - name: instagram
+    description: "Camada silver de conteudo Instagram sem deduplicacao."
+    columns:
+      - name: content_id
+        tests:
+          - not_null
+          - relationships:
+              to: source('public', 'raw_instagram_media')
+              field: id::text
+  - name: tiktok
+    description: "Camada silver de conteudo TikTok sem deduplicacao."
+    columns:
+      - name: content_id
+        tests:
+          - not_null
+          - relationships:
+              to: source('public', 'raw_tiktok_posts')
+              field: item_id::text
+  - name: platform
+    description: "Camada silver de comentarios com sentimento normalizado."
+    columns:
+      - name: platform
+        tests:
+          - accepted_values:
+              values: ['instagram', 'tiktok']
+      - name: sentiment
+        tests:
+          - accepted_values:
+              values: ['positive', 'negative', 'neutral']
+  - name: performance
+    description: "Camada gold com deduplicacao em nivel de conteudo + plataforma."
+    columns:
+      - name: content_id
+        description: "Identificador único do conteúdo na plataforma de origem."
+        tests:
+          - not_null
+      - name: platform
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['instagram', 'tiktok']
+      - name: engagement_rate
+        description: "Razão entre interações (likes + comentários) e alcance/visualizações."
+  - name: sentiment
+    description: "Camada gold de sentimento por conteudo e plataforma."
+    columns:
+      - name: content_id
+        tests:
+          - not_null
+      - name: platform
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['instagram', 'tiktok']
+      - name: total_comments
+        tests:
+          - not_null
+
+sources:
+  - name: public
+    schema: public
+    tables:
+      - name: raw_instagram_media
+      - name: raw_instagram_media_insights
+      - name: raw_instagram_comments
+      - name: raw_tiktok_posts
+      - name: raw_tiktok_comments
