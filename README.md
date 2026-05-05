@@ -138,23 +138,25 @@ docker compose exec -T postgres psql -U techtest -d views_db -f /opt/project/que
 
 **Premissas:** 
 
-- Assumiu-se que o timestamp gerado nas plataformas base reflete o fuso horário correto da análise ou que estava consolidado em UTC. 
 - Presumiu-se que posts ausentes de visualização ou alcance registrados legitimamente deveriam ter o seu engajamento anulado (NULL) e ignorado em médias.
 
 **Limitações Atuais:**
 
-- A ingestão bruta lê os dados em memória através do Pandas no `load_data.py`. Embora seja rápido e aplicável para o volume do desafio, isso criará gargalo de RAM se o arquivo bater na casa das dezenas de gigabytes. 
+- A ingestão bruta lê os dados em memória através do Pandas no `load_data.py`. Embora seja rápido e aplicável para o volume do desafio, isso criará gargalo em projetos maiores.
+  
 - O pipeline é disparado manualmente via UI do Airflow (`schedule_interval=None`). Essa decisão é intencional para o contexto do desafio; Em produção, o schedule seria configurado para `@daily` ou baseado em evento de chegada de dados.
 
 **Melhorias Futuras:**
 
 - **Refatorar Ingestão (Raw):** Substituir os DFs carregados em RAM por abordagens eficientes utilizando a feature de `COPY` nativo direto para o PostgreSQL via streams ou usando bibliotecas preparadas como DuckDB/Polars em caso de arquivos GCS/S3.
-- **Data Quality Avançado:** Acoplar bibliotecas extras como o `dbt-expectations` para prever anomalias numéricas ou variação abrupta no volume (ex: alertando caso o número de posts dobre subitamente de um dia para outro).
-- **Processamento Incremental:** Neste desafio, a tabela de performance atualiza realizando *Full Refresh*. Para tabelas massivas de Big Data, deve-se modificar os modelos no dbt para operarem de forma particionada e *Incremental*.
+  
+- **Data Quality Avançado:** Acoplar bibliotecas extras como o `dbt-expectations` para prever anomalias numéricas ou variação no volume.
+
+- **Processamento Incremental:** Neste desafio, a tabela de performance atualiza realizando *Full Refresh*. Para tabelas maiores seria bom os modelos no dbt operarem de forma particionada e Incremental.
 
 ## 10. Uso de IA (Inteligência Artificial)
 
-Neste projeto, ferramentas de IA (como ChatGPT/Claude/Gemini) foram utilizadas pontualmente como assistentes de codificação para:
+Neste projeto, ferramentas de IA (como Claude) foram utilizadas pontualmente como assistentes de codificação para:
 
 - Aceleração na escrita e formatação do arquivo `README.md`.
 - Geração de *boilerplates* estruturais para os testes `.yml` e asserções do `dbt`.
