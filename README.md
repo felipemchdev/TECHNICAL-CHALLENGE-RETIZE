@@ -32,10 +32,10 @@ A arquitetura segue o padrão de pipeline em lote (Batch Processing) e foi estru
 
 **Granularidade das tabelas finais:**
 
-| Tabela | Nível | Chave |
-|--------|-------|-------|
-| `mart_content_performance` | 1 linha por post (deduplicado) | `(platform, content_id)` |
-| `mart_content_sentiment` | 1 linha por post com comentários | `(platform, content_id)` |
+| Tabela                     | Nível                            | Chave                    |
+| -------------------------- | -------------------------------- | ------------------------ |
+| `mart_content_performance` | 1 linha por post (deduplicado)   | `(platform, content_id)` |
+| `mart_content_sentiment`   | 1 linha por post com comentários | `(platform, content_id)` |
 
 1. **Ingestão (Raw):** Script em Python (`src/load_data.py`) que varre o diretório `data/` e realiza o *copy* direto e tipado dos arquivos CSV para o PostgreSQL sem nenhum tratamento.
 2. **Transformação Silver:** Construída via **dbt**. Normaliza nomes de contas (lowercase), converte formatos e IDs para texto (evitando falhas de inteiros gigantes), e uniformiza as classificações de sentimentos (positive/negative/neutral), sem realizar agregações.
@@ -71,7 +71,7 @@ Para inicializar os serviços do banco de dados (PostgreSQL), orquestrador (Airf
 docker compose up -d --build
 ```
 
-Isso criará uma rede isolada garantindo que todas as aplicações conversem com o banco na porta interna `5432` (exposta na porta `55432` para uso na sua máquina local).
+Isso criará uma rede isolada garantindo que todas as aplicações conversem com o banco na porta interna `5434` (exposta na porta `55436` para uso na sua máquina local).
 
 ## 5. Como Executar o Pipeline
 
@@ -83,7 +83,7 @@ Com os serviços rodando, acesse em seu navegador:
 - **Usuário:** admin
 - **Senha:** 123
 
-Na tela inicial do Airflow, localize a DAG chamada `retize_pipeline` e clique no botão de **"Trigger DAG"** (ícone de *play*) para iniciar a execução manual. O pipeline irá orquestrar sequencialmente a ingestão dos dados e a execução das transformações e testes do dbt.
+Na tela inicial do Airflow, localize a DAG chamada `analytics_dbt` e clique no botão de **"Trigger DAG"** (ícone de *play*) para iniciar a execução manual. O pipeline irá orquestrar sequencialmente a ingestão dos dados e a execução das transformações e testes do dbt.
 
 ### Alternativa: Execução via CLI
 
@@ -99,10 +99,10 @@ docker compose exec -T airflow bash -lc "cd /opt/project && python src/load_data
 
 ```bash
 # Para executar a criação das Views (Silver) e Tabelas (Gold)
-docker compose exec -T airflow bash -lc "cd /opt/project/retize_dbt && dbt run --profiles-dir /opt/project/retize_dbt"
+docker compose exec -T airflow bash -lc "cd /opt/project/analytics_dbt && dbt run --profiles-dir /opt/project/analytics_dbt"
 
 # Para rodar as asserções de qualidade de dados
-docker compose exec -T airflow bash -lc "cd /opt/project/retize_dbt && dbt test --profiles-dir /opt/project/retize_dbt"
+docker compose exec -T airflow bash -lc "cd /opt/project/analytics_dbt && dbt test --profiles-dir /opt/project/analytics_dbt"
 ```
 
 ## 6. Como Rodar as Queries

@@ -16,10 +16,10 @@ venv/
 target/
 dbt_modules/
 dbt_packages/
-retize_dbt/logs/
-retize_dbt/target/
-retize_dbt/dbt_packages/
-retize_dbt/.user.yml
+analytics_dbt/logs/
+analytics_dbt/target/
+analytics_dbt/dbt_packages/
+analytics_dbt/.user.yml
 
 # OS / IDE
 .DS_Store

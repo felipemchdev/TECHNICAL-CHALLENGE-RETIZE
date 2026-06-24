@@ -57,10 +57,10 @@ trap on_error ERR
 trap on_stopped SIGINT SIGTERM
 
 echo -e "${GREEN_LIGHT}[RUN] task=dbt_run ts=$(date -u +%Y-%m-%dT%H:%M:%SZ)${NC}"
-cd /opt/project/retize_dbt
-dbt run --profiles-dir /opt/project/retize_dbt
+cd /opt/project/analytics_dbt
+dbt run --profiles-dir /opt/project/analytics_dbt
 echo -e "${GREEN_DARK}[SUCCESS] task=dbt_run ts=$(date -u +%Y-%m-%dT%H:%M:%SZ)${NC}"
-echo -e "${GREEN_DARK}[SUCCESS] dbt_artifacts run_results=${HIGHLIGHT}/opt/project/retize_dbt/target/run_results.json${NC} manifest=${HIGHLIGHT}/opt/project/retize_dbt/target/manifest.json${NC}"
+echo -e "${GREEN_DARK}[SUCCESS] dbt_artifacts run_results=${HIGHLIGHT}/opt/project/analytics_dbt/target/run_results.json${NC} manifest=${HIGHLIGHT}/opt/project/analytics_dbt/target/manifest.json${NC}"
 """
 
 DBT_TEST_CMD = r"""
@@ -88,14 +88,14 @@ trap on_error ERR
 trap on_stopped SIGINT SIGTERM
 
 echo -e "${GREEN_LIGHT}[RUN] task=dbt_test ts=$(date -u +%Y-%m-%dT%H:%M:%SZ)${NC}"
-cd /opt/project/retize_dbt
-dbt test --profiles-dir /opt/project/retize_dbt
+cd /opt/project/analytics_dbt
+dbt test --profiles-dir /opt/project/analytics_dbt
 echo -e "${GREEN_DARK}[SUCCESS] task=dbt_test ts=$(date -u +%Y-%m-%dT%H:%M:%SZ)${NC}"
-echo -e "${GREEN_DARK}[SUCCESS] dbt_artifacts run_results=${HIGHLIGHT}/opt/project/retize_dbt/target/run_results.json${NC} manifest=${HIGHLIGHT}/opt/project/retize_dbt/target/manifest.json${NC}"
+echo -e "${GREEN_DARK}[SUCCESS] dbt_artifacts run_results=${HIGHLIGHT}/opt/project/analytics_dbt/target/run_results.json${NC} manifest=${HIGHLIGHT}/opt/project/analytics_dbt/target/manifest.json${NC}"
 """
 
 with DAG(
-    dag_id="retize_pipeline",
+    dag_id="analytics_pipeline",
     start_date=datetime(2024, 1, 1),
     schedule=None,
     catchup=False,

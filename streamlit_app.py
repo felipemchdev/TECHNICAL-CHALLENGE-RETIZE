@@ -146,7 +146,7 @@ section[data-testid="stSidebar"] .stMarkdown h3 {
 }
 
 /* Header banner */
-.retize-header {
+.analytics-header {
     background: linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #1e1b4b 100%);
     border: 1px solid #4338ca;
     border-radius: 14px;
@@ -157,7 +157,7 @@ section[data-testid="stSidebar"] .stMarkdown h3 {
     overflow: hidden;
 }
 
-.retize-header::before {
+.analytics-header::before {
     content: '';
     position: absolute;
     top: -50%;
@@ -168,7 +168,7 @@ section[data-testid="stSidebar"] .stMarkdown h3 {
     pointer-events: none;
 }
 
-.retize-header h1 {
+.analytics-header h1 {
     color: #fff;
     font-size: 1.6rem;
     font-weight: 700;
@@ -176,7 +176,7 @@ section[data-testid="stSidebar"] .stMarkdown h3 {
     letter-spacing: -0.02em;
 }
 
-.retize-header p {
+.analytics-header p {
     color: #a78bfa;
     font-size: 0.85rem;
     margin: 0;
@@ -295,7 +295,7 @@ def load_dataframe(sql: str, params: Optional[dict] = None) -> pd.DataFrame:
         candidates.append(dotenv_cfg)
     for c in [base_cfg, dotenv_cfg]:
         if c["host"] in ("localhost", "127.0.0.1"):
-            for p in ("55432", "5433", "5432"):
+            for p in ("5543", "5433", "5432"):
                 alt = dict(c, port=p)
                 if alt not in candidates:
                     candidates.append(alt)
@@ -378,7 +378,7 @@ ALL_TABLES = {t for tables in LAYER_OPTIONS.values() for t in tables}
 # PAGE CONFIG
 # ──────────────────────────────────────────────
 st.set_page_config(
-    page_title="Retize Challenge · Social Analytics",
+    page_title="analytics Challenge · Social Analytics",
     page_icon="📊",
     layout="wide",
     initial_sidebar_state="expanded",
@@ -429,8 +429,8 @@ with st.sidebar:
 # HEADER BANNER
 # ──────────────────────────────────────────────
 st.markdown("""
-<div class="retize-header">
-  <h1>📊 Retize · Social Analytics</h1>
+<div class="analytics-header">
+  <h1>📊 analytics · Social Analytics</h1>
   <p>Pipeline analítico · Instagram & TikTok · Medallion Architecture</p>
 </div>
 """, unsafe_allow_html=True)
@@ -444,7 +444,7 @@ if not is_connected:
     st.markdown(
         "Verifique se o banco está no ar:\n"
         "- `POSTGRES_HOST=localhost`\n"
-        "- `POSTGRES_PORT=55432`\n"
+        "- `POSTGRES_PORT=5433`\n"
         "- `POSTGRES_DB=views_db`\n\n"
         "Suba com `docker compose up -d`."
     )
@@ -463,7 +463,7 @@ except Exception as exc:
         "ou diretamente:\n\n"
         "```bash\n"
         "docker compose exec -T airflow bash -lc \"cd /opt/project && python src/load_data.py\"\n"
-        "docker compose exec -T airflow bash -lc \"cd /opt/project/retize_dbt && dbt run --profiles-dir /opt/project/retize_dbt\"\n"
+        "docker compose exec -T airflow bash -lc \"cd /opt/project/analytics_dbt && dbt run --profiles-dir /opt/project/analytics_dbt\"\n"
         "```"
     )
     st.code(str(exc))

@@ -30,7 +30,7 @@ class JsonFormatter(logging.Formatter):
 
 
 def get_logger() -> logging.Logger:
-    logger = logging.getLogger("retize_ingestion")
+    logger = logging.getLogger("analytics_ingestion")
     logger.setLevel(logging.INFO)
     if not logger.handlers:
         handler = logging.StreamHandler()

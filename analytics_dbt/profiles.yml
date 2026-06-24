@@ -1,4 +1,4 @@
-retize_dbt:
+analytics_dbt:
   target: dev
   outputs:
     dev:
