@@ -1,4 +1,4 @@
-# Analytics Platform — Social Media Performance Pipeline
+# Analytics Platform - Social Media Performance Pipeline
 
 ## 1. Visão Geral da Solução
 
@@ -10,7 +10,7 @@ A arquitetura segue o padrão de pipeline em lote (Batch Processing) estruturada
 
 ```text
 ╔══════════════════════════════════════════════════════════════════════════════════╗
-║                    ANALYTICS PLATFORM — VISÃO GERAL                             ║
+║                    ANALYTICS PLATFORM - VISÃO GERAL                             ║
 ╠══════════════╦═══════════════════════╦═══════════════════════╦══════════════════╣
 ║  INGESTÃO    ║      RAW (Bronze)     ║    SILVER (Staging)   ║   GOLD (Marts)   ║
 ║  Python      ║      PostgreSQL       ║    dbt views          ║   dbt tables     ║
